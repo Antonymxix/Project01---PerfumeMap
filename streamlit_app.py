@@ -89,7 +89,22 @@ with st.container(border=True):
             label_visibility="collapsed",
         )
     with col2:
-        show_labels = st.toggle("Labels", value=True)
+        if "show_labels" not in st.session_state:
+            st.session_state.show_labels = True
+        btn_label = "◉ Labels" if st.session_state.show_labels else "◎ Labels"
+        btn_style = (
+            "background:rgba(124,58,237,0.12);border:1.5px solid rgba(124,58,237,0.35);"
+            "color:#7c3aed;font-weight:700;font-size:13px;border-radius:14px;"
+            "padding:8px 18px;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;"
+        ) if st.session_state.show_labels else (
+            "background:rgba(148,163,184,0.10);border:1.5px solid rgba(148,163,184,0.28);"
+            "color:#94a3b8;font-weight:700;font-size:13px;border-radius:14px;"
+            "padding:8px 18px;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;"
+        )
+        if st.button(btn_label, key="labels_btn", use_container_width=True):
+            st.session_state.show_labels = not st.session_state.show_labels
+            st.rerun()
+        show_labels = st.session_state.show_labels
 
 # ── FILTER LOGIC ──────────────────────────────────────────────────────────────
 filtered = df.copy()
