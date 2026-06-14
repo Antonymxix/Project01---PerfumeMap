@@ -220,12 +220,10 @@ st.markdown("""
   <div class="hero-eyebrow">◈ &nbsp;AI-Powered · Sentence Transformers + PCA</div>
   <div class="hero-title">Scent<span>Explorer</span> AI</div>
   <div class="hero-sub">
-    100 designer fragrances mapped by olfactory similarity — embeddings computed via
-    <code>all-MiniLM-L6-v2</code>, reduced to 2D with PCA. Similar scents cluster together.
+    100 designer fragrances mapped by olfactory similarity — an AI model analyzes each scent's notes and accords, then projects them into 2D space. Similar fragrances cluster together.
   </div>
   <div class="stat-row">
     <div class="stat-pill"><span class="dot" style="background:#7c3aed"></span> 100 Fragrances</div>
-    <div class="stat-pill"><span class="dot" style="background:#0ea5e9"></span> 384-dim Embeddings</div>
     <div class="stat-pill"><span class="dot" style="background:#ec4899"></span> {accords} Accord Groups</div>
     <div class="stat-pill"><span class="dot" style="background:#10b981"></span> {var:.0f}% Variance explained</div>
   </div>
@@ -239,25 +237,35 @@ st.markdown("""
 st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 st.markdown('<div class="section-label">Filter & Explore</div>', unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns([2, 2, 1])
+col1, col2 = st.columns([3, 1])
 with col1:
-    search = st.text_input("", placeholder="🔍  Search fragrance or brand…", label_visibility="collapsed")
-with col2:
     all_accords = sorted(df['Accords'].unique())
     selected_accords = st.multiselect("", options=all_accords, placeholder="Filter by accord…", label_visibility="collapsed")
-with col3:
-    show_labels = st.toggle("Show labels", value=True)
+with col2:
+    st.markdown("""
+    <style>
+    div[data-testid="stToggle"] label {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #475569 !important;
+        font-family: 'DM Sans', sans-serif !important;
+    }
+    div[data-testid="stToggle"] p {
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #475569 !important;
+    }
+    div[data-testid="stToggle"] [data-checked="true"] {
+        background-color: #7c3aed !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    show_labels = st.toggle("Fragrance Labels", value=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ── FILTER LOGIC ──────────────────────────────────────────────────────────────
 filtered = df.copy()
-if search:
-    mask = (
-        filtered['Name'].str.contains(search, case=False, na=False) |
-        filtered['Brand'].str.contains(search, case=False, na=False)
-    )
-    filtered = filtered[mask]
 if selected_accords:
     filtered = filtered[filtered['Accords'].isin(selected_accords)]
 
