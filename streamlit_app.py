@@ -12,45 +12,39 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-CSS = """
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<style>
-html, body, [class*="css"] { font-family: 'DM Sans', system-ui, sans-serif !important; }
-.stApp { background: #eef0f8; }
-.stApp::before {
-    content:''; position:fixed; width:700px; height:700px; top:-200px; left:-150px;
-    background:rgba(149,100,255,0.35); border-radius:50%; filter:blur(180px); z-index:0; pointer-events:none;
-}
-.stApp::after {
-    content:''; position:fixed; width:580px; height:580px; top:10%; right:-120px;
-    background:rgba(56,189,248,0.28); border-radius:50%; filter:blur(160px); z-index:0; pointer-events:none;
-}
-#MainMenu, footer, header { visibility:hidden; }
-.block-container { padding:2.5rem 3rem !important; max-width:1400px !important; position:relative; z-index:1; }
+def inject_css():
+    css = (
+        "<link href='https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;900&display=swap' rel='stylesheet'>"
+        "<style>"
+        "html,body,[class*='css']{font-family:'DM Sans',system-ui,sans-serif!important}"
+        ".stApp{background:#eef0f8}"
+        "#MainMenu,footer,header{visibility:hidden}"
+        ".block-container{padding:2.5rem 3rem!important;max-width:1400px!important;position:relative;z-index:1}"
+        "div[data-testid='stVerticalBlock']>div[data-testid='stVerticalBlockBorderWrapper']{"
+        "background:rgba(255,255,255,0.82)!important;"
+        "border:1px solid rgba(255,255,255,0.70)!important;"
+        "border-radius:24px!important;"
+        "box-shadow:0 4px 32px rgba(0,0,0,0.07),inset 0 1.5px 0 rgba(255,255,255,0.95)!important;"
+        "padding:2rem 2.5rem!important;"
+        "margin-bottom:0.5rem!important}"
+        "div[data-baseweb='select']>div{"
+        "background:rgba(255,255,255,0.75)!important;"
+        "border:1px solid rgba(148,163,184,0.28)!important;"
+        "border-radius:16px!important;"
+        "box-shadow:inset 0 1px 0 rgba(255,255,255,0.9)!important;"
+        "font-family:'DM Sans',sans-serif!important}"
+        "div[data-testid='stToggle'] span[role='checkbox']{"
+        "background-color:#7c3aed!important;"
+        "border-color:#7c3aed!important}"
+        "div[data-testid='stToggle'] p{"
+        "color:#7c3aed!important;"
+        "font-weight:600!important;"
+        "font-size:13px!important}"
+        "</style>"
+    )
+    st.markdown(css, unsafe_allow_html=True)
 
-div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"] {
-    background:rgba(255,255,255,0.82) !important;
-    border:1px solid rgba(255,255,255,0.70) !important;
-    border-radius:24px !important;
-    box-shadow:0 4px 32px rgba(0,0,0,0.07), inset 0 1.5px 0 rgba(255,255,255,0.95) !important;
-    padding:2rem 2.5rem !important;
-    margin-bottom:0.5rem !important;
-}
-
-div[data-baseweb="select"] > div {
-    background:rgba(255,255,255,0.75) !important;
-    border:1px solid rgba(148,163,184,0.28) !important;
-    border-radius:16px !important;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.9) !important;
-    font-family:'DM Sans', sans-serif !important;
-}
-
-div[data-testid="stToggle"] > label > div:first-child {
-    background-color: #7c3aed !important;
-}
-</style>
-"""
-st.markdown(CSS, unsafe_allow_html=True)
+inject_css()
 
 
 @st.cache_resource
@@ -72,51 +66,42 @@ df, variance_ratio = load_data()
 n_accords = int(df['Accords'].nunique())
 var_pct = int((variance_ratio[0] + variance_ratio[1]) * 100)
 
+pill = (
+    "display:inline-flex;align-items:center;gap:6px;padding:8px 16px;"
+    "border-radius:16px;background:rgba(255,255,255,0.7);"
+    "border:1px solid rgba(148,163,184,0.25);"
+    "box-shadow:inset 0 1px 0 rgba(255,255,255,0.9);"
+    "font-size:13px;font-weight:600;color:#334155;margin-right:8px;"
+)
+dot = "width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;"
+
 # ── HERO ──────────────────────────────────────────────────────────────────────
 with st.container(border=True):
     st.markdown(
-        f"""
-        <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;
-            background:rgba(124,58,237,0.09);border:1px solid rgba(124,58,237,0.22);
-            color:#7c3aed;font-size:12px;font-weight:600;letter-spacing:0.04em;margin-bottom:1.2rem;">
-            ◈ &nbsp;AI-Powered · Sentence Transformers + PCA
-        </div>
-        <div style="font-size:3rem;font-weight:900;letter-spacing:-0.02em;line-height:1.05;color:#0f172a;margin-bottom:0.5rem;">
-            Scent<span style="background:linear-gradient(135deg,#7c3aed,#6366f1,#0ea5e9);
-            -webkit-background-clip:text;-webkit-text-fill-color:transparent;">Explorer</span> AI
-        </div>
-        <div style="font-size:0.95rem;color:#64748b;line-height:1.6;max-width:560px;margin-bottom:1.5rem;">
-            100 designer fragrances mapped by olfactory similarity — an AI model analyzes each
-            scent's notes and accords, then projects them into 2D space. Similar fragrances cluster together.
-        </div>
-        <div style="display:flex;gap:12px;flex-wrap:wrap;">
-            <div style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:16px;
-                background:rgba(255,255,255,0.7);border:1px solid rgba(148,163,184,0.25);
-                box-shadow:inset 0 1px 0 rgba(255,255,255,0.9);font-size:13px;font-weight:600;color:#334155;">
-                <span style="width:8px;height:8px;border-radius:50%;background:#7c3aed;display:inline-block;"></span>
-                100 Fragrances
-            </div>
-            <div style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:16px;
-                background:rgba(255,255,255,0.7);border:1px solid rgba(148,163,184,0.25);
-                box-shadow:inset 0 1px 0 rgba(255,255,255,0.9);font-size:13px;font-weight:600;color:#334155;">
-                <span style="width:8px;height:8px;border-radius:50%;background:#ec4899;display:inline-block;"></span>
-                {n_accords} Accord Groups
-            </div>
-            <div style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:16px;
-                background:rgba(255,255,255,0.7);border:1px solid rgba(148,163,184,0.25);
-                box-shadow:inset 0 1px 0 rgba(255,255,255,0.9);font-size:13px;font-weight:600;color:#334155;">
-                <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span>
-                {var_pct}% Variance explained
-            </div>
-        </div>
-        """,
+        "<div style='display:inline-flex;align-items:center;gap:8px;padding:6px 16px;"
+        "border-radius:999px;background:rgba(124,58,237,0.09);border:1px solid rgba(124,58,237,0.22);"
+        "color:#7c3aed;font-size:12px;font-weight:600;letter-spacing:0.04em;margin-bottom:1.2rem;'>"
+        "&#9672; &nbsp;AI-Powered &middot; Sentence Transformers + PCA</div>"
+        "<div style='font-size:3rem;font-weight:900;letter-spacing:-0.02em;line-height:1.05;"
+        "color:#0f172a;margin-bottom:0.5rem;'>Scent"
+        "<span style='background:linear-gradient(135deg,#7c3aed,#6366f1,#0ea5e9);"
+        "-webkit-background-clip:text;-webkit-text-fill-color:transparent;'>Explorer</span> AI</div>"
+        "<div style='font-size:0.95rem;color:#64748b;line-height:1.6;max-width:560px;margin-bottom:1.5rem;'>"
+        "100 designer fragrances mapped by olfactory similarity &mdash; an AI model analyzes each "
+        "scent's notes and accords, then projects them into 2D space. Similar fragrances cluster together.</div>"
+        "<div style='display:flex;flex-wrap:wrap;gap:8px;'>"
+        f"<div style='{pill}'><span style='{dot}background:#7c3aed'></span>100 Fragrances</div>"
+        f"<div style='{pill}'><span style='{dot}background:#ec4899'></span>{n_accords} Accord Groups</div>"
+        f"<div style='{pill}'><span style='{dot}background:#10b981'></span>{var_pct}% Variance explained</div>"
+        "</div>",
         unsafe_allow_html=True,
     )
 
 # ── FILTERS ───────────────────────────────────────────────────────────────────
 with st.container(border=True):
     st.markdown(
-        '<p style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#94a3b8;margin-bottom:0.8rem;">Filter & Explore</p>',
+        "<p style='font-size:11px;font-weight:700;letter-spacing:0.12em;"
+        "text-transform:uppercase;color:#94a3b8;margin-bottom:0.8rem;'>Filter &amp; Explore</p>",
         unsafe_allow_html=True,
     )
     col1, col2 = st.columns([4, 1])
@@ -147,7 +132,8 @@ color_map = {acc: palette[i % len(palette)] for i, acc in enumerate(accord_list)
 # ── CHART ─────────────────────────────────────────────────────────────────────
 with st.container(border=True):
     st.markdown(
-        '<p style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#94a3b8;margin-bottom:0.5rem;">Fragrance Space</p>',
+        "<p style='font-size:11px;font-weight:700;letter-spacing:0.12em;"
+        "text-transform:uppercase;color:#94a3b8;margin-bottom:0.5rem;'>Fragrance Space</p>",
         unsafe_allow_html=True,
     )
 
@@ -216,9 +202,10 @@ with st.container(border=True):
 
 # ── FOOTER ────────────────────────────────────────────────────────────────────
 st.markdown(
-    '<div style="text-align:center;padding:1.5rem 0 0.5rem;color:#94a3b8;font-size:12px;">'
-    'Built by <strong style="color:#7c3aed">Anton Schindler</strong> &nbsp;·&nbsp; AI & Data Science &nbsp;·&nbsp;'
-    '<a href="https://github.com/Antonymxix" style="color:#7c3aed;text-decoration:none;">GitHub ↗</a>'
-    '</div>',
+    "<div style='text-align:center;padding:1.5rem 0 0.5rem;color:#94a3b8;font-size:12px;'>"
+    "Built by <strong style='color:#7c3aed'>Anton Schindler</strong> &nbsp;&middot;&nbsp; "
+    "AI &amp; Data Science &nbsp;&middot;&nbsp;"
+    "<a href='https://github.com/Antonymxix' style='color:#7c3aed;text-decoration:none;'>GitHub &#8599;</a>"
+    "</div>",
     unsafe_allow_html=True,
 )
