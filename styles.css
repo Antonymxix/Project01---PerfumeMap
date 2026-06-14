@@ -27,11 +27,9 @@ div[data-testid="stToggle"] span[role="checkbox"] {
     border-color: #7c3aed !important;
 }
 
-div[data-testid="stToggle"] p {
-    color: #1e293b !important;
-    font-weight: 700 !important;
-    font-size: 13px !important;
-}
-div[data-testid="stToggle"] label > div:last-child {
-    color: #1e293b !important;
-}
+/* Toggle text — alle möglichen Selektoren */
+div[data-testid="stToggle"] p { color: #7c3aed !important; font-weight: 700 !important; }
+div[data-testid="stToggle"] label p { color: #7c3aed !important; font-weight: 700 !important; }
+div[data-testid="stToggle"] label div p { color: #7c3aed !important; font-weight: 700 !important; }
+div[data-testid="stToggle"] label { color: #7c3aed !important; }
+div[data-testid="stToggle"] label div { color: #7c3aed !important; }
