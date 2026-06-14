@@ -28,7 +28,10 @@ div[data-testid="stToggle"] span[role="checkbox"] {
 }
 
 div[data-testid="stToggle"] p {
-    color: #7c3aed !important;
-    font-weight: 600 !important;
+    color: #1e293b !important;
+    font-weight: 700 !important;
     font-size: 13px !important;
+}
+div[data-testid="stToggle"] label > div:last-child {
+    color: #1e293b !important;
 }
